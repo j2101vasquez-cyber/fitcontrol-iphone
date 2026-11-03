@@ -3,7 +3,7 @@
 const DBNAME='fitcontrol-pautas-files', STORE='files', META='fitcontrol-pautas-v1';
 const $=id=>document.getElementById(id);
 let entries=[];try{entries=JSON.parse(localStorage.getItem(META)||'[]');if(!Array.isArray(entries))entries=[]}catch{entries=[]}
-function persist(){localStorage.setItem(META,JSON.stringify(entries))}
+function persist(){localStorage.setItem(META,JSON.stringify(entries));window.dispatchEvent(new Event('fitcontrol:pauta-updated'))}
 function friendlyName(name){let s=String(name||'Pauta sin nombre');try{s=decodeURIComponent(s)}catch{}return s.replace(/%20/gi,' ').replace(/\s+/g,' ').trim()}
 async function fingerprint(file){const bytes=await file.arrayBuffer();const digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('')}
 async function removeFile(id){const d=await openDB();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).delete(id);t.oncomplete=()=>{d.close();res()};t.onerror=()=>{d.close();rej(t.error)}})}
