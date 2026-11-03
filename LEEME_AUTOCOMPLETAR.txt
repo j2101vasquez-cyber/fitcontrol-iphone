@@ -1,0 +1,2 @@
+AUTOCOMPLETADO POR MARCA Y VARIEDAD
+Al seleccionar alimento, marca y variedad previamente guardados, los valores de la etiqueta se completan automáticamente. Para un producto nuevo, ingresar valores verificados de la etiqueta una vez. No hay valores precargados sin verificar para Soprole Protein ni otras marcas.
