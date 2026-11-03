@@ -29,7 +29,7 @@ function init(){if(!$('fc14Food'))return;
  ['fc14Food','fc14Target','fc14Amount','fc14Can'].forEach(id=>$(id).addEventListener('input',calculate));
  $('fc14Save').onclick=()=>{const f=food(),g=Number($('fc14Amount').value),u=unit();if(!(g>0&&g<=10000&&u>0)){alert('Ingresa los gramos consumidos y, para el atún, el peso escurrido de una lata.');return}
  const amount=Math.round(g/u*100)/100;if(!confirm(`¿Sumar ${format(amount)} porciones de ${f[2]} al registro del día seleccionado?`))return;
- const d=$('portionDate').value||day();db.portions[d]??={};db.portions[d][f[2]]=Math.round(((Number(db.portions[d][f[2]])||0)+amount)*100)/100;save();renderPortions();if(typeof toast==='function')toast('Porciones registradas');};
+ const d=$('portionDate').value||day();if(typeof window.fc15Add==='function'){window.fc15Add({date:d,group:f[2],portions:amount,grams:g,food:f[1],mealType:$('mealType').value});}else{db.portions[d]??={};db.portions[d][f[2]]=Math.round(((Number(db.portions[d][f[2]])||0)+amount)*100)/100;save();renderPortions();}if(typeof toast==='function')toast('Porciones registradas');};
  $('fc14Fill').onclick=()=>{const f=food(),g=Number($('fc14Amount').value);if(!(g>0)){alert('Primero indica los gramos consumidos.');return} $('mealName').value=f[1];$('mealGrams').value=g;$('mealDate').value=$('portionDate').value||day();$('mealName').scrollIntoView({behavior:'smooth',block:'center'});if(typeof toast==='function')toast('Completa los nutrientes y guarda la comida');};
  calculate();}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

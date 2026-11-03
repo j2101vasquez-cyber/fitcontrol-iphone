@@ -1,0 +1,18 @@
+(()=>{
+'use strict';
+// Registro separado: los ajustes manuales previos permanecen intactos.
+const groups=[['proteinas','🍗 Proteínas',7.5],['cereales','🍚 Cereales',3],['lacteos','🥛 Lácteos',2],['frutas','🍎 Frutas',2],['scoop','🥤 Scoop proteína',1],['grasas','🥑 Grasas (día por medio)',1]];
+const format=n=>Number(n).toLocaleString('es-CL',{maximumFractionDigits:2});
+function entries(){if(!Array.isArray(db.portionEntries))db.portionEntries=[];return db.portionEntries}
+function combined(date){const values={...(db.portions[date]||{})};for(const x of entries()){if(x.date===date&&groups.some(g=>g[0]===x.group))values[x.group]=Math.round(((Number(values[x.group])||0)+Number(x.portions||0))*100)/100}return values}
+window.fc15Combined=combined;
+function row(date,g){const [key,label,max]=g,v=Number(combined(date)[key]||0),left=Math.max(0,max-v),pct=Math.min(100,Math.max(0,v/max*100));return `<div class="fc15-row"><div class="fc15-line"><strong>${label}</strong><span>${format(v)} / ${format(max)} · <b>${format(left)} restantes</b></span></div><div class="fc15-track"><div style="width:${pct}%;background:${v>max?'#e86b69':'#00bfa6'}"></div></div>${v>max?`<small style="color:#d75b5b">Superaste la pauta en ${format(v-max)} porciones.</small>`:''}</div>`}
+window.fc15Home=date=>`<div class="card fc15-summary" style="grid-column:1/-1"><h3>🥗 Lo que te queda por comer hoy</h3><p class="muted">Saldo según las porciones registradas de tu pauta. No equivale a gramos de proteína nutricional.</p>${groups.map(g=>row(date,g)).join('')}<p class="muted">Las grasas siguen la frecuencia de día por medio indicada en tu pauta.</p></div>`;
+window.fc15Panel=date=>`<div class="fc15-summary"><h3>📊 Saldo diario · ${date}</h3>${groups.map(g=>row(date,g)).join('')}<h4>Alimentos registrados por gramos</h4>${entries().filter(e=>e.date===date).map(e=>`<div class="fc15-entry"><span><b>${safe(e.mealType||'Comida')}</b> · ${safe(e.food)} · ${format(e.grams)} g<br><small>${format(e.portions)} porciones</small></span><button type="button" class="btn danger small" onclick="fc15Remove('${e.id}')">Eliminar</button></div>`).join('')||'<p class="muted">Aún no hay alimentos por gramos registrados en esta fecha. Los registros manuales anteriores se conservan.</p>'}<p class="muted">Si eliminas un alimento de esta lista, sus porciones se devuelven al saldo diario. Los ajustes con +½ y −½ se mantienen independientes.</p></div>`;
+function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+window.fc15Add=entry=>{entries().push({...entry,id:crypto.randomUUID()});save();renderPortions();renderHome()};
+window.fc15Remove=id=>{const e=entries().find(x=>x.id===id);if(!e||!confirm(`¿Eliminar ${e.food} (${format(e.portions)} porciones) del registro?`))return;db.portionEntries=db.portionEntries.filter(x=>x.id!==id);save();renderPortions();renderHome();if(typeof toast==='function')toast('Porciones devueltas al saldo')};
+const css=document.createElement('style');css.textContent=`.fc15-summary{padding:14px;border-radius:14px;background:var(--card,#fff);margin-top:12px}.fc15-row{margin:13px 0}.fc15-line{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.fc15-track{height:9px;background:#c7d6df55;border-radius:20px;overflow:hidden;margin-top:6px}.fc15-track>div{height:100%;border-radius:20px}.fc15-entry{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #8294a433;padding:10px 0}.fc15-entry small{opacity:.75}`;document.head.appendChild(css);
+// Este archivo se carga al final: actualizar el tablero ya renderizado.
+if(typeof renderPortions==='function')renderPortions();if(typeof renderHome==='function')renderHome();
+})();
