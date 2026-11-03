@@ -2,7 +2,7 @@
 const KEY='fitcontrol-theme';
 const b=document.getElementById('fcThemeButton');
 function apply(mode){document.body.classList.toggle('fc-light',mode!=='dark');if(b)b.textContent=mode==='dark'?'☀️ Claro':'🌙 Oscuro';document.querySelector('meta[name="theme-color"]')?.setAttribute('content',mode==='dark'?'#102b3f':'#f4f7fb');}
-let mode='light';try{mode=localStorage.getItem(KEY)==='dark'?'dark':'light'}catch(e){}apply(mode);
+let mode='dark';try{mode=localStorage.getItem(KEY)==='light'?'light':'dark'}catch(e){}apply(mode);
 b?.addEventListener('click',()=>{mode=document.body.classList.contains('fc-light')?'dark':'light';apply(mode);try{localStorage.setItem(KEY,mode)}catch(e){}});
 function mark(tab){document.body.dataset.activeTab=tab||'inicio'}
 mark(document.querySelector('.nav button.active')?.dataset.page);
