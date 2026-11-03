@@ -84,4 +84,4 @@ function drawWater(){if(el('waterStatus'))el('waterStatus').innerHTML=`<div clas
 const oldRender=render;render=function(){oldRender();drawPlan()};drawPlan();
 
 if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script><script src="./gym-upgrade.js"></script></body></html>
+</script><script src="./gym-upgrade.js"></script><script src="./pautas.js"></script></body></html>
