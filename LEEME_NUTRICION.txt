@@ -1,0 +1,12 @@
+FitControl Sport Premium - Nutrición ampliada
+
+1. Respalda tus datos JSON antes de actualizar.
+2. Sube el contenido del ZIP (no el ZIP) a la raíz del repositorio.
+3. En Alimentación selecciona un alimento, indica marca y variedad opcionales.
+4. Para gramos, ingresa la cantidad consumida. Para unidades, ingresa gramos comestibles por unidad.
+5. Introduce los 4 valores por 100 g de la etiqueta, o usa una referencia orientativa disponible.
+6. Los datos por marca y variedad se recuerdan en este navegador.
+7. Un alimento sin información nutricional se registra como porciones pero no se atribuyen macros ficticios.
+8. Los platos históricos incompletos no se recalculan automáticamente sin cantidades y etiquetas verificadas.
+
+Nota: referencias genéricas aproximadas; las marcas, preparación y productos pueden variar.
