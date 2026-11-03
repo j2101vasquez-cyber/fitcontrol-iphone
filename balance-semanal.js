@@ -1,0 +1,15 @@
+/* FitControl 1.8.1: balance del menú activo, sin cambiar almacenamiento */
+(function(){'use strict';
+const goals={cereales:3,proteinas:7.5,lacteos:2,frutas:2};
+const names={cereales:'Cereales',proteinas:'Proteínas',lacteos:'Lácteos',frutas:'Frutas'};
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function getGroups(r){if(!r||!r.groups||!Object.keys(r.groups).length)return null;let out={};for(const [k,v] of Object.entries(r.groups)){let key=({cereal:'cereales',proteina:'proteinas',lacteo:'lacteos',fruta:'frutas',grasa:'grasas'})[norm(k)]||norm(k);if(![...Object.keys(goals),'grasas'].includes(key)||!Number.isFinite(Number(v)))return null;out[key]=(out[key]||0)+Number(v)}return out}
+function renderDay(row,i){const totals={cereales:0,proteinas:0,lacteos:0,frutas:0,grasas:0},unknown=[];for(let j=0;j<(row||[]).length;j++){let r=recipes.find(x=>x.id===row[j]),g=getGroups(r);if(!g){unknown.push((PLAN_SLOTS[j]||'Comida')+': '+(r?r.name:'Sin receta'));continue}for(const [k,v] of Object.entries(g))totals[k]+=v}
+let html='';for(const [k,goal] of Object.entries(goals)){let v=totals[k],ok=Math.abs(v-goal)<0.01,color=ok?'#21a67a':v>goal?'#db6262':'#e4a13d';html+='<div style="margin:12px 0"><div style="display:flex;justify-content:space-between"><b>'+names[k]+'</b><span>'+v+' / '+goal+'</span></div><div style="height:9px;background:rgba(128,128,128,.25);border-radius:9px;overflow:hidden"><div style="height:100%;width:'+Math.min(100,v/goal*100)+'%;background:'+color+'"></div></div><small>'+(ok?'Objetivo cubierto':v>goal?'Exceso: '+(v-goal):'Faltan '+(goal-v))+'</small></div>'}
+html+='<p><b>Alimentos ricos en grasas:</b> '+totals.grasas+' porción(es). Objetivo: 1 porción día por medio, según corresponda.</p>';
+if(unknown.length)html+='<p style="color:#e4a13d"><b>⚠ Porciones pendientes de validar:</b> '+unknown.map(escape).join(' · ')+'. Los totales son parciales.</p>';
+html+='<p class="muted">Revisar aparte: scoop de proteína, verduras, aceite de preparación y sustituciones de ingredientes. Este balance no garantiza que el menú cumpla toda la pauta.</p>';return html}
+function update(){let el=document.getElementById('fc181Balance');if(!el||typeof db==='undefined'||!db.weekPlanner)return;el.innerHTML=(db.weekPlanner.days||[]).map((row,i)=>'<details style="padding:12px 0;border-bottom:1px solid rgba(128,128,128,.2)" '+(i===0?'open':'')+'><summary><b>'+escape(PLAN_DAYS[i]||'Día')+'</b></summary>'+renderDay(row,i)+'</details>').join('')}
+let originalDraw=window.drawPlan;if(typeof originalDraw==='function')window.drawPlan=function(){originalDraw();update()};let originalSet=window.planSet;if(typeof originalSet==='function')window.planSet=function(d,i,v){originalSet(d,i,v);update()};let originalActivate=window.fc18Activate;if(typeof originalActivate==='function')window.fc18Activate=function(){originalActivate();update()};update();
+})();
