@@ -1,0 +1,1 @@
+3 recetas nuevas añadidas al recetario: quesadilla de pollo y porotos, bowl de lentejas y pollo, ensalada tibia de sardinas. Valores nutricionales aproximados, porciones de pauta pendientes de validar. No se modifican claves ni registros de localStorage. Instalar sobre el mismo sitio/origen para conservar datos. Se recomienda respaldo JSON antes de publicar.
